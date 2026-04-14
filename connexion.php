@@ -1,7 +1,7 @@
 <?php
-$host = '127.0.0.1'; // On oublie "localhost", on utilise l'IP directe
-$port = '3309';      // CHANGE ICI SI XAMPP AFFICHE 3306
-$db   = 'projet_fao';
+$host = '127.0.0.1';
+$port = '3309';
+$db = 'projet_fao';
 $user = 'root';
 $pass = '';
 
@@ -13,7 +13,7 @@ try {
     ]);
     // Si on arrive ici, c'est gagné !
 } catch (PDOException $e) {
-    echo "<h3>❌ Erreur de connexion</h3>";
+    echo "<h3>Erreur de connexion</h3>";
     echo "Port tenté : $port <br>";
     echo "Message : " . $e->getMessage();
     exit;
