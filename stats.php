@@ -91,26 +91,29 @@ $r7 = $stmt_r7->fetchAll(PDO::FETCH_ASSOC);
 
 // ===================== R8 =====================
 $stmt_r8 = $pdo->query("
-    SELECT cat.nom AS categorie, pa.nom AS pays, totaux.total_production
+   SELECT 
+    cat.nom AS categorie,
+    pa.nom AS pays,
+    SUM(p.quantite_t) AS total_production
+FROM PRODUCTION p
+JOIN PAYS pa ON p.id_pays = pa.id_pays
+JOIN CULTURE c ON p.id_culture = c.id_culture
+JOIN CATEGORIE_CULTURE cat ON c.id_categorie = cat.id_categorie
+JOIN (
+    -- Sous-requête pour trouver la valeur maximale par catégorie
+    SELECT id_categorie, MAX(somme_prod) as valeur_max
     FROM (
-        SELECT c.id_categorie, p.id_pays, SUM(p.quantite_t) AS total_production
-        FROM PRODUCTION p
-        JOIN CULTURE c ON p.id_culture = c.id_culture
-        GROUP BY c.id_categorie, p.id_pays
+        SELECT c2.id_categorie, p2.id_pays, SUM(p2.quantite_t) AS somme_prod
+        FROM PRODUCTION p2
+        JOIN CULTURE c2 ON p2.id_culture = c2.id_culture
+        GROUP BY c2.id_categorie, p2.id_pays
     ) AS totaux
-    JOIN (
-        SELECT id_categorie, MAX(total_production) AS max_prod
-        FROM (
-            SELECT c2.id_categorie, p2.id_pays, SUM(p2.quantite_t) AS total_production
-            FROM PRODUCTION p2
-            JOIN CULTURE c2 ON p2.id_culture = c2.id_culture
-            GROUP BY c2.id_categorie, p2.id_pays
-        ) AS sub
-        GROUP BY id_categorie
-    ) AS maxs ON totaux.id_categorie = maxs.id_categorie AND totaux.total_production = maxs.max_prod
-    JOIN CATEGORIE_CULTURE cat ON totaux.id_categorie = cat.id_categorie
-    JOIN PAYS pa ON totaux.id_pays = pa.id_pays
-    ORDER BY cat.nom
+    GROUP BY id_categorie
+) AS max_par_cat ON cat.id_categorie = max_par_cat.id_categorie
+GROUP BY cat.id_categorie, cat.nom, pa.nom, max_par_cat.valeur_max
+-- Filtre direct pour comparer la somme calculée au max de la catégorie
+HAVING SUM(p.quantite_t) = max_par_cat.valeur_max
+ORDER BY cat.nom;
 ");
 $r8 = $stmt_r8->fetchAll(PDO::FETCH_ASSOC);
 
