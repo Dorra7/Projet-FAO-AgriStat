@@ -1,0 +1,7 @@
+# Ne pas envoyer la config locale (mots de passe, ports spécifiques)
+connexion.php
+config.inc.php
+
+# Ne pas envoyer les fichiers système
+.DS_Store
+Thumbs.db
