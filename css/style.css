@@ -165,6 +165,8 @@ body {
   background: var(--white);
   border-bottom: 1px solid var(--gray-200);
   padding: 1.25rem 2rem;
+  justify-content: center;
+
 }
 
 .stats-bar-inner {
@@ -173,6 +175,7 @@ body {
   display: flex;
   gap: 2rem;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .stat-pill {
