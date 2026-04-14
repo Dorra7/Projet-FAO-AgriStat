@@ -1,5 +1,5 @@
 <?php
-$host = '127.0.0.1';
+$host = 'localhost';
 $port = '3309';
 $db = 'projet_fao';
 $user = 'root';
